@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300"
+     height="150"
+     viewBox="0 0 300 150">
+
+  <title>SVG XSS Security Test</title>
+
+  <rect width="300" height="150" fill="#eeeeee"/>
+
+  <text x="20" y="45" font-size="18" fill="black">
+    SVG Upload Security Test
+  </text>
+
+  <script type="text/javascript">
+    prompt("XSS Vulnerability - SVG Upload");
+  </script>
+
+</svg>

